@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] — ClinicCare</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+@if (TempData["Success"] != null) { <span id="__toast_success" data-msg="@TempData["Success"]" hidden></span> }
+@if (TempData["Error"]   != null) { <span id="__toast_error"   data-msg="@TempData["Error"]"   hidden></span> }
+
+<div class="auth-page">
+    @RenderBody()
+</div>
+
+<script src="~/js/site.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

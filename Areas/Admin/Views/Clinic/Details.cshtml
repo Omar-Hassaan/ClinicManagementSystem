@@ -1,0 +1,55 @@
+@model Clinic
+@{ ViewData["Title"] = Model.Name; ViewData["Page"] = "Clinics"; }
+
+<div class="page-header">
+    <div>
+        <h1>@Model.Name</h1>
+        <div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><a asp-action="Index">Clinics</a><span>/</span><span>@Model.Name</span></div>
+    </div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">✏️ Edit</a>
+</div>
+
+<div class="grid grid-3-1 mb-6">
+    <div class="card">
+        <div class="card-body">
+            <div class="grid grid-2">
+                <div><div class="text-muted text-sm">Specialization</div><div class="fw-600">@Model.Specialization</div></div>
+                <div><div class="text-muted text-sm">Phone</div><div class="fw-600">@Model.PhoneNumber</div></div>
+                <div><div class="text-muted text-sm">Address</div><div class="fw-600">@Model.Address</div></div>
+                <div><div class="text-muted text-sm">Status</div><div>@(Model.IsActive ? "🟢 Active" : "🔴 Inactive")</div></div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="mt-4"><div class="text-muted text-sm">Description</div><p class="mt-1">@Model.Description</p></div>
+            }
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" style="width:100%;border-radius:14px;object-fit:cover;height:100%;max-height:220px;" />
+    }
+</div>
+
+<div class="card">
+    <div class="card-header"><h5>👨‍⚕️ Doctors at this Clinic (@Model.Doctors.Count)</h5></div>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>Name</th><th>Specialization</th><th>Fee</th><th>Status</th></tr></thead>
+            <tbody>
+                @if (!Model.Doctors.Any())
+                {
+                    <tr><td colspan="4" class="text-center text-muted">No doctors assigned yet.</td></tr>
+                }
+                @foreach (var d in Model.Doctors)
+                {
+                    <tr>
+                        <td>Dr. @d.FullName</td>
+                        <td>@d.Specialization</td>
+                        <td>$@d.ConsultationFee</td>
+                        <td>@(d.IsActive ? "🟢 Active" : "🔴 Inactive")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

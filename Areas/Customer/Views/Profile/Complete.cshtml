@@ -1,0 +1,42 @@
+@model CompleteProfileVM
+@{ ViewData["Title"] = "Complete Your Profile"; ViewData["Page"] = "Home"; }
+
+<div class="flex justify-between" style="justify-content:center;">
+    <div class="card" style="max-width:640px;width:100%;">
+        <div class="card-header"><h5>🩺 Complete Your Medical Profile</h5></div>
+        <div class="card-body">
+            <p class="text-muted mb-4">Just a few details before you can book appointments and access your medical records.</p>
+
+            <form asp-action="Complete" method="post">
+                @Html.AntiForgeryToken()
+                @if (!ViewData.ModelState.IsValid) { <div class="alert alert-danger">@foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors)) { <div>@e.ErrorMessage</div> }</div> }
+
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Gender <span class="req">*</span></label>
+                        <select asp-for="Gender" class="form-select"><option value="">--</option><option>Male</option><option>Female</option></select>
+                    </div>
+                    <div class="form-group"><label class="form-label">Age <span class="req">*</span></label><input asp-for="Age" type="number" class="form-control" /></div>
+                </div>
+
+                <div class="form-group"><label class="form-label">Date of Birth <span class="req">*</span></label><input asp-for="DateOfBirth" type="date" class="form-control" /></div>
+
+                <div class="form-group"><label class="form-label">Blood Type</label>
+                    <select asp-for="BloodType" class="form-select">
+                        <option value="">--</option>
+                        @foreach (var bt in new[]{"A+","A-","B+","B-","AB+","AB-","O+","O-"}) { <option value="@bt">@bt</option> }
+                    </select>
+                </div>
+
+                <div class="form-group"><label class="form-label">Allergies</label><textarea asp-for="Allergies" class="form-control" placeholder="Any known allergies?"></textarea></div>
+                <div class="form-group"><label class="form-label">Chronic Diseases</label><textarea asp-for="ChronicDiseases" class="form-control"></textarea></div>
+
+                <div class="form-row">
+                    <div class="form-group"><label class="form-label">Emergency Contact Name</label><input asp-for="EmergencyContactName" class="form-control" /></div>
+                    <div class="form-group"><label class="form-label">Emergency Contact Phone</label><input asp-for="EmergencyContactPhone" class="form-control" /></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full btn-lg mt-2">Save & Continue</button>
+            </form>
+        </div>
+    </div>
+</div>

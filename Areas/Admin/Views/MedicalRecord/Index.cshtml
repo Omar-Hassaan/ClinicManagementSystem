@@ -1,0 +1,40 @@
+@model IEnumerable<MedicalRecord>
+@{ ViewData["Title"] = "Medical Records"; ViewData["Page"] = "MedicalRecords"; }
+
+<div class="page-header">
+    <div><h1>Medical Records</h1><div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><span>Medical Records</span></div></div>
+    <a asp-action="Create" class="btn btn-primary">➕ New Record</a>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>Patient</th><th>Doctor</th><th>Diagnosis</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📄</div><h3>No medical records yet</h3></div></td></tr>
+                }
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>@r.Patient?.FullName</td>
+                        <td>Dr. @r.Appointment?.Doctor?.FullName</td>
+                        <td>@r.Diagnosis</td>
+                        <td>@r.CreatedAt.ToString("MMM d, yyyy")</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-outline btn-sm">👁️</a>
+                                <a asp-action="Edit" asp-route-id="@r.Id" class="btn btn-outline btn-sm">✏️</a>
+                                <form asp-action="Delete" asp-route-id="@r.Id" method="post" data-confirm="Delete this record?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

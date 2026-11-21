@@ -1,0 +1,36 @@
+@model IEnumerable<Clinic>
+@{ ViewData["Title"] = "Clinics"; ViewData["Page"] = "Clinics"; }
+
+<div class="page-header">
+    <div><h1>Our Clinics</h1></div>
+    <form method="get" class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" name="search" value="@ViewBag.Search" placeholder="Search clinics..." />
+    </form>
+</div>
+
+<div class="grid grid-3">
+    @if (!Model.Any())
+    {
+        <div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">🏥</div><h3>No clinics found</h3></div>
+    }
+    @foreach (var c in Model)
+    {
+        <div class="doctor-card">
+            @if (!string.IsNullOrEmpty(c.ImageUrl))
+            {
+                <img src="@c.ImageUrl" class="dc-img" alt="@c.Name" />
+            }
+            else
+            {
+                <div class="dc-img">🏥</div>
+            }
+            <div class="dc-body">
+                <div class="dc-name">@c.Name</div>
+                <div class="dc-spec">@c.Specialization</div>
+                <div class="dc-clinic">📍 @c.Address</div>
+                <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-outline w-full mt-4" style="justify-content:center;">View Doctors</a>
+            </div>
+        </div>
+    }
+</div>

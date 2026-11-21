@@ -1,0 +1,45 @@
+@model IEnumerable<Doctor>
+@{ ViewData["Title"] = "Doctors"; ViewData["Page"] = "Doctors"; }
+
+<div class="page-header">
+    <div>
+        <h1>Doctors</h1>
+        <div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><span>Doctors</span></div>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">➕ Add Doctor</a>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>Doctor</th><th>Specialization</th><th>Clinic</th><th>Phone</th><th>Fee</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👨‍⚕️</div><h3>No doctors yet</h3></div></td></tr>
+                }
+                @foreach (var d in Model)
+                {
+                    <tr>
+                        <td><div class="flex items-center gap-3"><div class="avatar">@d.FullName.Substring(0,1)</div><span class="fw-600">Dr. @d.FullName</span></div></td>
+                        <td>@d.Specialization</td>
+                        <td>@d.Clinic?.Name</td>
+                        <td>@d.PhoneNumber</td>
+                        <td>$@d.ConsultationFee</td>
+                        <td>@(d.IsActive ? "🟢 Active" : "🔴 Inactive")</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a asp-action="Details" asp-route-id="@d.Id" class="btn btn-outline btn-sm">👁️</a>
+                                <a asp-action="Edit" asp-route-id="@d.Id" class="btn btn-outline btn-sm">✏️</a>
+                                <form asp-action="Delete" asp-route-id="@d.Id" method="post" data-confirm="Delete Dr. @d.FullName?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

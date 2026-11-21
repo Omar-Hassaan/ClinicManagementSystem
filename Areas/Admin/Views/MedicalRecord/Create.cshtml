@@ -1,0 +1,43 @@
+@model MedicalRecordVM
+@{ ViewData["Title"] = "New Medical Record"; ViewData["Page"] = "MedicalRecords"; var appts = ViewBag.Appointments as List<Appointment> ?? new(); }
+
+<div class="page-header">
+    <div><h1>New Medical Record</h1><div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><a asp-action="Index">Medical Records</a><span>/</span><span>New</span></div></div>
+</div>
+
+<div class="card" style="max-width:760px;">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            @if (!ViewData.ModelState.IsValid) { <div class="alert alert-danger">@foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors)) { <div>@e.ErrorMessage</div> }</div> }
+
+            <div class="form-group"><label class="form-label">Appointment <span class="req">*</span></label>
+                <select asp-for="AppointmentId" class="form-select">
+                    <option value="">-- Select Appointment (only ones without a record) --</option>
+                    @foreach (var a in appts) { <option value="@a.Id">@a.Patient.FullName with Dr. @a.Doctor.FullName — @a.AppointmentDate.ToString("g")</option> }
+                </select>
+                @if (!appts.Any())
+                {
+                    <div class="form-hint">No available appointments. All appointments already have a medical record, or none exist yet.</div>
+                }
+            </div>
+
+            <div class="form-group"><label class="form-label">Diagnosis <span class="req">*</span></label><input asp-for="Diagnosis" class="form-control" /></div>
+            <div class="form-group"><label class="form-label">Symptoms</label><textarea asp-for="Symptoms" class="form-control"></textarea></div>
+            <div class="form-group"><label class="form-label">Treatment Plan</label><textarea asp-for="TreatmentPlan" class="form-control"></textarea></div>
+            <div class="form-group"><label class="form-label">Doctor Notes</label><textarea asp-for="DoctorNotes" class="form-control"></textarea></div>
+
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Weight (kg)</label><input asp-for="Weight" type="number" step="0.1" class="form-control" /></div>
+                <div class="form-group"><label class="form-label">Height (cm)</label><input asp-for="Height" type="number" step="0.1" class="form-control" /></div>
+                <div class="form-group"><label class="form-label">Temperature (°C)</label><input asp-for="Temperature" type="number" step="0.1" class="form-control" /></div>
+                <div class="form-group"><label class="form-label">Blood Pressure</label><input asp-for="BloodPressure" class="form-control" placeholder="120/80" /></div>
+            </div>
+
+            <div class="flex gap-3 mt-4">
+                <button type="submit" class="btn btn-primary">Create Record</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

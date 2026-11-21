@@ -1,0 +1,53 @@
+@model IEnumerable<MedicalRecord>
+@{ ViewData["Title"] = "Medical Records"; ViewData["Page"] = "Records"; }
+
+<div class="page-header"><div><h1>My Medical Records</h1></div></div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state"><div class="empty-icon">📄</div><h3>No medical records yet</h3><p>Your doctor will add records here after each visit.</p></div>
+}
+else
+{
+    @foreach (var record in Model)
+    {
+        <div class="accordion-item">
+            <div class="accordion-header">
+                <div>
+                    <div class="fw-700">@record.Diagnosis</div>
+                    <div class="text-muted text-sm">Dr. @record.Appointment?.Doctor?.FullName · @record.CreatedAt.ToString("MMM d, yyyy")</div>
+                </div>
+                <span class="acc-arrow">▾</span>
+            </div>
+            <div class="accordion-body">
+                @if (!string.IsNullOrEmpty(record.Symptoms)) { <p><strong>Symptoms:</strong> @record.Symptoms</p> }
+                @if (!string.IsNullOrEmpty(record.TreatmentPlan)) { <p class="mt-2"><strong>Treatment Plan:</strong> @record.TreatmentPlan</p> }
+
+                <div class="grid grid-4 mt-3">
+                    @if (record.Weight != null) { <div><div class="text-muted text-sm">Weight</div><div class="fw-600">@record.Weight kg</div></div> }
+                    @if (record.Height != null) { <div><div class="text-muted text-sm">Height</div><div class="fw-600">@record.Height cm</div></div> }
+                    @if (record.Temperature != null) { <div><div class="text-muted text-sm">Temp</div><div class="fw-600">@record.Temperature °C</div></div> }
+                    @if (record.BloodPressure != null) { <div><div class="text-muted text-sm">BP</div><div class="fw-600">@record.BloodPressure</div></div> }
+                </div>
+
+                @if (record.Prescriptions.Any())
+                {
+                    <h6 class="fw-600 mt-4 mb-2">💊 Prescriptions</h6>
+                    <table class="data-table">
+                        <thead><tr><th>Medicine</th><th>Dosage</th><th>Frequency</th><th>Until</th></tr></thead>
+                        <tbody>
+                            @foreach (var p in record.Prescriptions)
+                            {
+                                <tr><td>@p.MedicineName</td><td>@p.Dosage</td><td>@p.Frequency</td><td>@p.EndDate.ToString("MMM d, yyyy")</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted mt-3">No prescriptions for this record.</p>
+                }
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,63 @@
+@model BookAppointmentVM
+@{
+    ViewData["Title"] = "Book Appointment"; ViewData["Page"] = "Doctors";
+    var doctor = ViewBag.Doctor as Doctor;
+    var slots = ViewBag.AvailableSlots as List<DateTime> ?? new();
+    var slotsByDate = slots.GroupBy(s => s.Date).OrderBy(g => g.Key).ToList();
+}
+
+<a asp-controller="Doctor" asp-action="Details" asp-route-id="@doctor?.Id" class="btn btn-outline btn-sm mb-4">← Back to Doctor Profile</a>
+
+<div class="card mb-4">
+    <div class="card-body flex items-center gap-3">
+        @if (!string.IsNullOrEmpty(doctor?.ImageUrl)) { <img src="@doctor.ImageUrl" class="avatar avatar-lg" /> } else { <div class="avatar avatar-lg">@doctor?.FullName?.Substring(0,1)</div> }
+        <div>
+            <h3 class="fw-700">Dr. @doctor?.FullName</h3>
+            <p class="text-muted">@doctor?.Specialization · @doctor?.Clinic?.Name</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h5>📅 Choose a Time Slot</h5></div>
+    <div class="card-body">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">@foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors)) { <div>@e.ErrorMessage</div> }</div>
+        }
+
+        @if (!slotsByDate.Any())
+        {
+            <div class="alert alert-warning">This doctor has no available time slots right now. Please check back later or choose another doctor.</div>
+        }
+        else
+        {
+            <form asp-action="Book" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="DoctorId" />
+
+                @foreach (var group in slotsByDate)
+                {
+                    <div class="mb-4">
+                        <div class="fw-600 mb-2">@group.Key.ToString("dddd, MMM d, yyyy")</div>
+                        <div class="slot-grid">
+                            @foreach (var slot in group)
+                            {
+                                var slotId = "slot_" + slot.ToString("yyyyMMddHHmm");
+                                <input type="radio" name="SlotDateTime" id="@slotId" value="@slot.ToString("yyyy-MM-ddTHH:mm:ss")" class="slot-radio" required />
+                                <label for="@slotId" class="slot-label">@slot.ToString("h:mm tt")</label>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="form-group mt-4">
+                    <label class="form-label">Notes for the doctor (optional)</label>
+                    <textarea asp-for="Notes" class="form-control" placeholder="Briefly describe your symptoms or reason for the visit"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg mt-2">✅ Confirm Booking</button>
+            </form>
+        }
+    </div>
+</div>

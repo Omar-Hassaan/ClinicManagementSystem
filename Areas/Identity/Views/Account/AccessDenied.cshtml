@@ -1,0 +1,8 @@
+@{ ViewData["Title"] = "Access Denied"; }
+
+<div class="auth-card" style="text-align:center;">
+    <div style="font-size:64px;margin-bottom:16px;">🚫</div>
+    <h2 style="color:var(--danger);margin-bottom:8px;">Access Denied</h2>
+    <p style="color:var(--muted);margin-bottom:24px;">You don't have permission to access this page.</p>
+    <a asp-action="Login" asp-controller="Account" asp-area="Identity" class="btn btn-primary">Back to Login</a>
+</div>

@@ -1,0 +1,30 @@
+@model Patient
+@{ ViewData["Title"] = "My Profile"; ViewData["Page"] = "Home"; }
+
+<div class="page-header">
+    <div><h1>My Medical Profile</h1></div>
+    <a asp-action="Edit" class="btn btn-primary">✏️ Edit</a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="profile-header">
+            <div class="avatar avatar-lg">@Model.FullName.Substring(0,1).ToUpper()</div>
+            <div>
+                <div style="font-size:20px;font-weight:700;">@Model.FullName</div>
+                <div class="text-muted">@Model.ApplicationUser?.Email</div>
+            </div>
+        </div>
+
+        <div class="grid grid-2 mt-4">
+            <div><div class="text-muted text-sm">Gender</div><div class="fw-600">@Model.Gender</div></div>
+            <div><div class="text-muted text-sm">Age</div><div class="fw-600">@Model.Age</div></div>
+            <div><div class="text-muted text-sm">Date of Birth</div><div class="fw-600">@Model.DateOfBirth.ToString("MMM d, yyyy")</div></div>
+            <div><div class="text-muted text-sm">Blood Type</div><div class="fw-600">@(Model.BloodType ?? "—")</div></div>
+            <div><div class="text-muted text-sm">Emergency Contact</div><div class="fw-600">@Model.EmergencyContactName @(Model.EmergencyContactPhone != null ? $"({Model.EmergencyContactPhone})" : "")</div></div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Allergies)) { <div class="mt-4"><div class="text-muted text-sm">Allergies</div><p>@Model.Allergies</p></div> }
+        @if (!string.IsNullOrEmpty(Model.ChronicDiseases)) { <div class="mt-4"><div class="text-muted text-sm">Chronic Diseases</div><p>@Model.ChronicDiseases</p></div> }
+    </div>
+</div>

@@ -1,0 +1,77 @@
+@model RegisterVM
+@{ ViewData["Title"] = "Create Account"; }
+
+<div class="auth-card" style="max-width:520px;">
+    <div class="auth-logo">
+        <div class="logo-circle">🏥</div>
+        <h2>Create Account</h2>
+        <p>Register as a new patient</p>
+    </div>
+
+    <form asp-action="Register" asp-controller="Account" asp-area="Identity" method="post">
+        @Html.AntiForgeryToken()
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <span>⚠️</span>
+                <div>
+                    @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@err.ErrorMessage</div>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Full Name <span class="req">*</span></label>
+                <input asp-for="FullName" class="form-control" placeholder="Your full name" />
+                <span asp-validation-for="FullName" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Username <span class="req">*</span></label>
+                <input asp-for="Username" class="form-control" placeholder="Choose a username" />
+                <span asp-validation-for="Username" class="field-error"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Email <span class="req">*</span></label>
+            <input asp-for="Email" class="form-control" placeholder="your@email.com" />
+            <span asp-validation-for="Email" class="field-error"></span>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="+20 ..." />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <input asp-for="Address" class="form-control" placeholder="City, Country" />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Password <span class="req">*</span></label>
+                <input asp-for="Password" class="form-control" placeholder="Min. 6 characters" />
+                <span asp-validation-for="Password" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirm Password <span class="req">*</span></label>
+                <input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat password" />
+                <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full btn-lg">Create Account</button>
+
+        <div class="auth-divider">already have an account?</div>
+
+        <a asp-action="Login" asp-controller="Account" asp-area="Identity"
+           class="btn btn-outline w-full" style="justify-content:center;">Sign In</a>
+    </form>
+</div>

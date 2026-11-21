@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] — Clinic Admin</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+<!-- TempData hooks (read by site.js) -->
+@if (TempData["Success"] != null) { <span id="__toast_success" data-msg="@TempData["Success"]" hidden></span> }
+@if (TempData["Error"]   != null) { <span id="__toast_error"   data-msg="@TempData["Error"]"   hidden></span> }
+@if (TempData["Warning"] != null) { <span id="__toast_warning" data-msg="@TempData["Warning"]" hidden></span> }
+@if (TempData["Info"]    != null) { <span id="__toast_info"    data-msg="@TempData["Info"]"    hidden></span> }
+
+<div class="admin-wrapper">
+
+    <!-- ── SIDEBAR ─────────────────────────────────────────── -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="logo-icon">🏥</div>
+            <div>
+                <span>Clinic System<small>Management Portal</small></span>
+            </div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-section">Main</div>
+
+            <a class="nav-link @(ViewData["Page"]?.ToString() == "Dashboard" ? "active" : "")"
+               asp-area="Admin" asp-controller="Home" asp-action="Index">
+                <span class="nav-icon">📊</span> Dashboard
+            </a>
+
+            <div class="nav-section">Management</div>
+
+            <a class="nav-link @(ViewData["Page"]?.ToString() == "Clinics" ? "active" : "")"
+               asp-area="Admin" asp-controller="Clinic" asp-action="Index">
+                <span class="nav-icon">🏥</span> Clinics
+            </a>
+
+            <a class="nav-link @(ViewData["Page"]?.ToString() == "Doctors" ? "active" : "")"
+               asp-area="Admin" asp-controller="Doctor" asp-action="Index">
+                <span class="nav-icon">👨‍⚕️</span> Doctors
+            </a>
+
+            <a class="nav-link @(ViewData["Page"]?.ToString() == "Schedules" ? "active" : "")"
+               asp-area="Admin" asp-controller="DoctorSchedule" asp-action="Index">
+                <span class="nav-icon">📅</span> Doctor Schedules
+            </a>
+
+            <a class="nav-link @(ViewData["Page"]?.ToString() == "Patients" ? "active" : "")"
+               asp-area="Admin" asp-controller="Patient" asp-action="Index">
+                <span class="nav-icon">🧑‍🤝‍🧑</span> Patients
+            </a>
+
+            <div class="nav-section">Operations</div>
+
+            <a class="nav-link @(ViewData["Page"]?.ToString() == "Appointments" ? "active" : "")"
+               asp-area="Admin" asp-controller="Appointment" asp-action="Index">
+                <span class="nav-icon">📋</span> Appointments
+            </a>
+
+            <a class="nav-link @(ViewData["Page"]?.ToString() == "MedicalRecords" ? "active" : "")"
+               asp-area="Admin" asp-controller="MedicalRecord" asp-action="Index">
+                <span class="nav-icon">📄</span> Medical Records
+            </a>
+
+            <a class="nav-link @(ViewData["Page"]?.ToString() == "Prescriptions" ? "active" : "")"
+               asp-area="Admin" asp-controller="Prescription" asp-action="Index">
+                <span class="nav-icon">💊</span> Prescriptions
+            </a>
+
+            <div class="nav-section">System</div>
+
+            <a class="nav-link @(ViewData["Page"]?.ToString() == "Users" ? "active" : "")"
+               asp-area="Admin" asp-controller="User" asp-action="Index">
+                <span class="nav-icon">👥</span> Users & Roles
+            </a>
+        </div>
+
+        <div style="padding: 16px 24px; border-top: 1px solid #1e293b;">
+            <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="nav-link" style="width:100%;background:none;border:none;cursor:pointer;color:#94a3b8;">
+                    <span class="nav-icon">🚪</span> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- ── TOPBAR ──────────────────────────────────────────── -->
+    <header class="topbar">
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="topbar-title">@ViewData["Title"]</div>
+        <div class="topbar-right">
+            <div class="dropdown">
+                <div class="topbar-user" data-dropdown>
+                    <div class="topbar-avatar">@(User.Identity?.Name?.Substring(0,1).ToUpper() ?? "A")</div>
+                    <div>
+                        <div style="font-size:14px;font-weight:600;">@User.Identity?.Name</div>
+                        <div style="font-size:12px;color:var(--muted);">Administrator</div>
+                    </div>
+                    <span>▾</span>
+                </div>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" asp-area="Identity" asp-controller="Profile" asp-action="Index">👤 My Profile</a>
+                    <div class="dropdown-divider"></div>
+                    <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="dropdown-item danger">🚪 Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ── MAIN CONTENT ────────────────────────────────────── -->
+    <main class="admin-main">
+        @RenderBody()
+    </main>
+
+</div>
+
+<script src="~/js/site.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

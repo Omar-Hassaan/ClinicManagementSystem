@@ -1,0 +1,40 @@
+@model IEnumerable<DoctorSchedule>
+@{ ViewData["Title"] = "Doctor Schedules"; ViewData["Page"] = "Schedules"; }
+
+<div class="page-header">
+    <div><h1>Doctor Schedules</h1><div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><span>Schedules</span></div></div>
+    <a asp-action="Create" class="btn btn-primary">➕ Add Schedule</a>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>Doctor</th><th>Day</th><th>Start</th><th>End</th><th>Slot Length</th><th>Actions</th></tr></thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📅</div><h3>No schedules yet</h3></div></td></tr>
+                }
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>Dr. @s.Doctor?.FullName</td>
+                        <td><span class="badge badge-primary">@s.DayOfWeek</span></td>
+                        <td>@s.StartTime.ToString("h:mm tt")</td>
+                        <td>@s.EndTime.ToString("h:mm tt")</td>
+                        <td>@s.SlotDurationMinutes min</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a asp-action="Edit" asp-route-id="@s.Id" class="btn btn-outline btn-sm">✏️</a>
+                                <form asp-action="Delete" asp-route-id="@s.Id" method="post" data-confirm="Delete this schedule?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,87 @@
+@model ProfileVM
+@{
+    ViewData["Title"] = "My Account";
+    Layout = "_AuthLayout";
+}
+
+<div style="width:100%;max-width:640px;">
+    <div class="card">
+        <div class="card-header">
+            <h5>⚙️ Account Settings</h5>
+            <a href="javascript:history.back()" class="btn btn-outline btn-sm">← Back</a>
+        </div>
+        <div class="card-body">
+
+            <div class="profile-header">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="avatar avatar-lg" alt="avatar" />
+                }
+                else
+                {
+                    <div class="avatar avatar-lg">@Model.FullName.Substring(0,1).ToUpper()</div>
+                }
+                <div>
+                    <div style="font-size:19px;font-weight:700;">@Model.FullName</div>
+                    <div class="text-muted text-sm">@Model.Email</div>
+                </div>
+            </div>
+
+            <form asp-action="UpdateProfile" asp-controller="Profile" asp-area="Identity" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label class="form-label">Profile Photo</label>
+                    <input type="file" name="Photo" class="form-control" accept="image/*" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input asp-for="FullName" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input value="@Model.UserName" class="form-control" disabled />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address</label>
+                        <input asp-for="Address" class="form-control" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+
+            <hr style="margin:26px 0;border:none;border-top:1px solid var(--border);" />
+
+            <h6 style="margin-bottom:14px;font-weight:600;">🔒 Change Password</h6>
+            <form asp-action="ChangePassword" asp-controller="Profile" asp-area="Identity" method="post">
+                @Html.AntiForgeryToken()
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" name="CurrentPassword" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password" name="NewPassword" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" name="ConfirmPassword" class="form-control" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-secondary">Update Password</button>
+            </form>
+
+        </div>
+    </div>
+</div>

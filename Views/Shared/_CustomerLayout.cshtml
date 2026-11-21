@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] — Patient Portal</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+@if (TempData["Success"] != null) { <span id="__toast_success" data-msg="@TempData["Success"]" hidden></span> }
+@if (TempData["Error"]   != null) { <span id="__toast_error"   data-msg="@TempData["Error"]"   hidden></span> }
+@if (TempData["Warning"] != null) { <span id="__toast_warning" data-msg="@TempData["Warning"]" hidden></span> }
+@if (TempData["Info"]    != null) { <span id="__toast_info"    data-msg="@TempData["Info"]"    hidden></span> }
+
+<nav class="patient-nav">
+    <div class="patient-nav-inner">
+        <a class="patient-nav-brand" asp-area="Customer" asp-controller="Home" asp-action="Index">
+            🏥 ClinicCare
+        </a>
+
+        <div class="patient-nav-links">
+            <a class="patient-nav-link @(ViewData["Page"]?.ToString() == "Home"     ? "active" : "")"
+               asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
+            <a class="patient-nav-link @(ViewData["Page"]?.ToString() == "Clinics"  ? "active" : "")"
+               asp-area="Customer" asp-controller="Clinic" asp-action="Index">Clinics</a>
+            <a class="patient-nav-link @(ViewData["Page"]?.ToString() == "Doctors"  ? "active" : "")"
+               asp-area="Customer" asp-controller="Doctor" asp-action="Index">Doctors</a>
+            <a class="patient-nav-link @(ViewData["Page"]?.ToString() == "Appointments" ? "active" : "")"
+               asp-area="Customer" asp-controller="Appointment" asp-action="Index">My Appointments</a>
+            <a class="patient-nav-link @(ViewData["Page"]?.ToString() == "Records"  ? "active" : "")"
+               asp-area="Customer" asp-controller="MedicalRecord" asp-action="Index">Medical Records</a>
+        </div>
+
+        <div class="patient-nav-right">
+            <div class="dropdown">
+                <div class="topbar-avatar" data-dropdown style="cursor:pointer;">
+                    @(User.Identity?.Name?.Substring(0,1).ToUpper() ?? "P")
+                </div>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" asp-area="Customer" asp-controller="Profile" asp-action="Index">👤 My Profile</a>
+                    <a class="dropdown-item" asp-area="Identity" asp-controller="Profile" asp-action="Index">⚙️ Account Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="dropdown-item danger">🚪 Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="patient-content">
+    @RenderBody()
+</div>
+
+<footer style="background:#0f172a;color:#64748b;text-align:center;padding:20px;font-size:13px;">
+    © @DateTime.Now.Year ClinicCare Management System
+</footer>
+
+<script src="~/js/site.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

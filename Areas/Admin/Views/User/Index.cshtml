@@ -1,0 +1,75 @@
+@model IEnumerable<UserListVM>
+@{ ViewData["Title"] = "Users & Roles"; ViewData["Page"] = "Users"; }
+
+<div class="page-header">
+    <div>
+        <h1>Users & Roles</h1>
+        <div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><span>Users</span></div>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">➕ Add User</a>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th><th>Username</th><th>Email</th><th>Phone</th>
+                    <th>Roles</th><th>Status</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👥</div><h3>No users yet</h3></div></td></tr>
+                }
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="avatar">@u.FullName.Substring(0,1).ToUpper()</div>
+                                <span class="fw-600">@u.FullName</span>
+                            </div>
+                        </td>
+                        <td>@u.UserName</td>
+                        <td>@u.Email</td>
+                        <td>@(u.PhoneNumber ?? "—")</td>
+                        <td>
+                            @foreach (var r in u.Roles)
+                            {
+                                <span class="badge badge-info">@r</span>
+                            }
+                            @if (!u.Roles.Any()) { <span class="text-muted text-sm">No roles</span> }
+                        </td>
+                        <td>
+                            @if (u.IsLocked) { <span class="badge badge-danger">🔒 Locked</span> }
+                            else { <span class="badge badge-success">✅ Active</span> }
+                        </td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-outline btn-sm">✏️ Edit</a>
+                                <a asp-action="ManageRoles" asp-route-id="@u.Id" class="btn btn-outline btn-sm">🛡️ Roles</a>
+                                <form asp-action="ToggleLock" asp-route-id="@u.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    @if (u.IsLocked)
+                                    {
+                                        <button type="submit" class="btn btn-success btn-sm">🔓 Unlock</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-warning btn-sm">🔒 Lock</button>
+                                    }
+                                </form>
+                                <form asp-action="Delete" asp-route-id="@u.Id" method="post" data-confirm="Delete this user permanently?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

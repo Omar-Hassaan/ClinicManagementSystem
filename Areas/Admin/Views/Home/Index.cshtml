@@ -1,0 +1,139 @@
+@model DashboardVM
+@{ ViewData["Title"] = "Dashboard"; ViewData["Page"] = "Dashboard"; }
+
+<div class="page-header">
+    <div>
+        <h1>Dashboard</h1>
+        <div class="breadcrumb"><span>Overview of your clinic system</span></div>
+    </div>
+</div>
+
+<!-- ── STAT CARDS ─────────────────────────────────────────────── -->
+<div class="grid grid-4 mb-6">
+    <div class="stat-card">
+        <div class="stat-icon blue">👥</div>
+        <div class="stat-info">
+            <div class="stat-value">@Model.TotalUsers</div>
+            <div class="stat-label">Total Users</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green">👨‍⚕️</div>
+        <div class="stat-info">
+            <div class="stat-value">@Model.TotalDoctors</div>
+            <div class="stat-label">Total Doctors</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon amber">🧑‍🤝‍🧑</div>
+        <div class="stat-info">
+            <div class="stat-value">@Model.TotalPatients</div>
+            <div class="stat-label">Total Patients</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple">🏥</div>
+        <div class="stat-info">
+            <div class="stat-value">@Model.TotalClinics</div>
+            <div class="stat-label">Total Clinics</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-4 mb-6">
+    <div class="stat-card">
+        <div class="stat-icon indigo">📋</div>
+        <div class="stat-info">
+            <div class="stat-value">@Model.TotalAppointments</div>
+            <div class="stat-label">Total Appointments</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon teal">📄</div>
+        <div class="stat-info">
+            <div class="stat-value">@Model.TotalMedicalRecords</div>
+            <div class="stat-label">Medical Records</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon rose">💊</div>
+        <div class="stat-info">
+            <div class="stat-value">@Model.TotalPrescriptions</div>
+            <div class="stat-label">Prescriptions</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon red">⏳</div>
+        <div class="stat-info">
+            <div class="stat-value">@Model.PendingAppointments</div>
+            <div class="stat-label">Pending Appointments</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── CHARTS ─────────────────────────────────────────────────── -->
+<div class="grid grid-2-1 mb-6">
+    <div class="card">
+        <div class="card-header"><h5>📈 Appointments — Last 6 Months</h5></div>
+        <div class="card-body"><canvas id="lineChart" height="90"></canvas></div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h5>🥧 Users by Role</h5></div>
+        <div class="card-body"><canvas id="rolePie" height="90"></canvas></div>
+    </div>
+</div>
+
+<div class="grid grid-2">
+    <div class="card">
+        <div class="card-header"><h5>📊 Doctors per Clinic</h5></div>
+        <div class="card-body"><canvas id="barChart" height="100"></canvas></div>
+    </div>
+    <div class="card">
+        <div class="card-header"><h5>🎯 Appointment Status</h5></div>
+        <div class="card-body"><canvas id="statusPie" height="100"></canvas></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script>
+        const monthLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthLabels));
+        const monthCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyAppointments));
+        const clinicLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ClinicLabels));
+        const doctorsPerClinic = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DoctorsPerClinic));
+        const roleLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RoleLabels));
+        const roleCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RoleCounts));
+        const statusLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StatusLabels));
+        const statusCounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StatusCounts));
+
+        const palette = ['#2563eb','#10b981','#f59e0b','#ef4444','#7c3aed','#0d9488','#e11d48','#4f46e5'];
+
+        new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: { labels: monthLabels, datasets: [{
+                label: 'Appointments', data: monthCounts,
+                borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,.12)',
+                fill: true, tension: .35, pointRadius: 4
+            }]},
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
+
+        new Chart(document.getElementById('rolePie'), {
+            type: 'pie',
+            data: { labels: roleLabels, datasets: [{ data: roleCounts, backgroundColor: palette }] },
+            options: { plugins: { legend: { position: 'bottom' } } }
+        });
+
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: { labels: clinicLabels, datasets: [{ label: 'Doctors', data: doctorsPerClinic, backgroundColor: '#10b981', borderRadius: 6 }] },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        });
+
+        new Chart(document.getElementById('statusPie'), {
+            type: 'doughnut',
+            data: { labels: statusLabels, datasets: [{ data: statusCounts, backgroundColor: palette }] },
+            options: { plugins: { legend: { position: 'bottom' } } }
+        });
+    </script>
+}

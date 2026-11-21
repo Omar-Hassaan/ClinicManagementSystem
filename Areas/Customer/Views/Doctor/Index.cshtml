@@ -1,0 +1,42 @@
+@model IEnumerable<Doctor>
+@{ ViewData["Title"] = "Find a Doctor"; ViewData["Page"] = "Doctors"; var clinics = ViewBag.Clinics as List<Clinic> ?? new(); }
+
+<div class="page-header"><div><h1>Find a Doctor</h1></div></div>
+
+<form method="get" class="card mb-6">
+    <div class="card-body flex gap-3" style="flex-wrap:wrap;">
+        <input type="text" name="search" value="@ViewBag.Search" class="form-control" style="flex:2;min-width:200px;" placeholder="Search by name or specialization..." />
+        <select name="clinicId" class="form-select" style="flex:1;min-width:180px;">
+            <option value="">-- All Clinics --</option>
+            @foreach (var c in clinics) { <option value="@c.Id" selected="@(ViewBag.ClinicId?.ToString() == c.Id.ToString())">@c.Name</option> }
+        </select>
+        <button type="submit" class="btn btn-primary">🔍 Search</button>
+    </div>
+</form>
+
+<div class="grid grid-3">
+    @if (!Model.Any())
+    {
+        <div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">👨‍⚕️</div><h3>No doctors matched your search</h3></div>
+    }
+    @foreach (var d in Model)
+    {
+        <div class="doctor-card">
+            @if (!string.IsNullOrEmpty(d.ImageUrl))
+            {
+                <img src="@d.ImageUrl" class="dc-img" />
+            }
+            else
+            {
+                <div class="dc-img">👨‍⚕️</div>
+            }
+            <div class="dc-body">
+                <div class="dc-name">Dr. @d.FullName</div>
+                <div class="dc-spec">@d.Specialization</div>
+                <div class="dc-clinic">🏥 @d.Clinic?.Name</div>
+                <div class="dc-fee">$@d.ConsultationFee consultation</div>
+                <a asp-action="Details" asp-route-id="@d.Id" class="btn btn-primary w-full mt-4" style="justify-content:center;">View & Book</a>
+            </div>
+        </div>
+    }
+</div>

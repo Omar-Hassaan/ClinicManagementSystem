@@ -1,0 +1,51 @@
+@model Clinic
+@{ ViewData["Title"] = Model.Name; ViewData["Page"] = "Clinics"; var doctors = ViewBag.Doctors as List<Doctor> ?? new(); }
+
+<a asp-action="Index" class="btn btn-outline btn-sm mb-4">← Back to Clinics</a>
+
+<div class="card mb-6">
+    <div class="grid grid-2" style="gap:0;">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" style="width:100%;height:100%;object-fit:cover;min-height:220px;" />
+        }
+        else
+        {
+            <div style="min-height:220px;background:linear-gradient(135deg,#dbeafe,#e0e7ff);display:flex;align-items:center;justify-content:center;font-size:70px;">🏥</div>
+        }
+        <div class="card-body">
+            <h2 class="fw-700">@Model.Name</h2>
+            <p class="text-muted mt-1">@Model.Specialization</p>
+            <p class="mt-3">📍 @Model.Address</p>
+            <p>📞 @Model.PhoneNumber</p>
+            @if (!string.IsNullOrEmpty(Model.Description)) { <p class="mt-3">@Model.Description</p> }
+        </div>
+    </div>
+</div>
+
+<h3 class="fw-700 mb-4">Doctors at this Clinic</h3>
+<div class="grid grid-3">
+    @if (!doctors.Any())
+    {
+        <div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">👨‍⚕️</div><h3>No doctors listed yet</h3></div>
+    }
+    @foreach (var d in doctors)
+    {
+        <div class="doctor-card">
+            @if (!string.IsNullOrEmpty(d.ImageUrl))
+            {
+                <img src="@d.ImageUrl" class="dc-img" />
+            }
+            else
+            {
+                <div class="dc-img">👨‍⚕️</div>
+            }
+            <div class="dc-body">
+                <div class="dc-name">Dr. @d.FullName</div>
+                <div class="dc-spec">@d.Specialization</div>
+                <div class="dc-fee">$@d.ConsultationFee consultation</div>
+                <a asp-controller="Doctor" asp-action="Details" asp-route-id="@d.Id" class="btn btn-primary w-full mt-4" style="justify-content:center;">View & Book</a>
+            </div>
+        </div>
+    }
+</div>

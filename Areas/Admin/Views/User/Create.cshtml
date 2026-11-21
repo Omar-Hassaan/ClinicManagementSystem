@@ -1,0 +1,80 @@
+@model UserCreateVM
+@{ ViewData["Title"] = "Add User"; ViewData["Page"] = "Users"; var roles = ViewBag.Roles as List<string> ?? new(); }
+
+<div class="page-header">
+    <div>
+        <h1>Add User</h1>
+        <div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><a asp-action="Index">Users</a><span>/</span><span>Add</span></div>
+    </div>
+</div>
+
+<div class="card" style="max-width:720px;">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors)) { <div>@err.ErrorMessage</div> }
+                </div>
+            }
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Full Name <span class="req">*</span></label>
+                    <input asp-for="FullName" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Username <span class="req">*</span></label>
+                    <input asp-for="UserName" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Email <span class="req">*</span></label>
+                    <input asp-for="Email" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <input asp-for="Address" class="form-control" />
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Password <span class="req">*</span></label>
+                    <input asp-for="Password" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password <span class="req">*</span></label>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Roles</label>
+                <div class="card" style="padding:14px;">
+                    @foreach (var r in roles)
+                    {
+                        <div class="form-check">
+                            <input type="checkbox" name="SelectedRoles" value="@r" id="role_@r" class="form-check-input" />
+                            <label for="role_@r">@r</label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-4">
+                <button type="submit" class="btn btn-primary">Create User</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+@model IEnumerable<Patient>
+@{ ViewData["Title"] = "Patients"; ViewData["Page"] = "Patients"; }
+
+<div class="page-header">
+    <div><h1>Patients</h1><div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><span>Patients</span></div></div>
+    <a asp-action="Create" class="btn btn-primary">➕ Add Patient</a>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Gender</th><th>Age</th><th>Blood Type</th><th>Actions</th></tr></thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🧑‍🤝‍🧑</div><h3>No patients yet</h3></div></td></tr>
+                }
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td><div class="flex items-center gap-3"><div class="avatar">@p.FullName.Substring(0,1)</div><span class="fw-600">@p.FullName</span></div></td>
+                        <td>@p.ApplicationUser?.Email</td>
+                        <td>@p.Gender</td>
+                        <td>@p.Age</td>
+                        <td>@(p.BloodType ?? "—")</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-outline btn-sm">👁️</a>
+                                <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-outline btn-sm">✏️</a>
+                                <form asp-action="Delete" asp-route-id="@p.Id" method="post" data-confirm="Delete this patient?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

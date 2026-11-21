@@ -1,0 +1,53 @@
+@model PatientVM
+@{ ViewData["Title"] = "Add Patient"; ViewData["Page"] = "Patients"; var users = ViewBag.Users as List<ApplicationUser> ?? new(); }
+
+<div class="page-header">
+    <div><h1>Add Patient Profile</h1><div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><a asp-action="Index">Patients</a><span>/</span><span>Add</span></div></div>
+</div>
+
+<div class="card" style="max-width:720px;">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            @if (!ViewData.ModelState.IsValid) { <div class="alert alert-danger">@foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors)) { <div>@e.ErrorMessage</div> }</div> }
+
+            <div class="form-group"><label class="form-label">User Account <span class="req">*</span></label>
+                <select name="ApplicationUserId" class="form-select">
+                    <option value="">-- Select a user with the Patient role --</option>
+                    @foreach (var u in users) { <option value="@u.Id">@u.FullName (@u.Email)</option> }
+                </select>
+                <div class="form-hint">Only users with the "Patient" role who don't already have a profile show up here.</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Gender <span class="req">*</span></label>
+                    <select asp-for="Gender" class="form-select"><option value="">--</option><option>Male</option><option>Female</option></select>
+                </div>
+                <div class="form-group"><label class="form-label">Age <span class="req">*</span></label><input asp-for="Age" type="number" class="form-control" /></div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Date of Birth <span class="req">*</span></label><input asp-for="DateOfBirth" type="date" class="form-control" /></div>
+                <div class="form-group"><label class="form-label">Blood Type</label>
+                    <select asp-for="BloodType" class="form-select">
+                        <option value="">--</option>
+                        @foreach (var bt in new[]{"A+","A-","B+","B-","AB+","AB-","O+","O-"}) { <option value="@bt">@bt</option> }
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group"><label class="form-label">Allergies</label><textarea asp-for="Allergies" class="form-control"></textarea></div>
+            <div class="form-group"><label class="form-label">Chronic Diseases</label><textarea asp-for="ChronicDiseases" class="form-control"></textarea></div>
+
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Emergency Contact Name</label><input asp-for="EmergencyContactName" class="form-control" /></div>
+                <div class="form-group"><label class="form-label">Emergency Contact Phone</label><input asp-for="EmergencyContactPhone" class="form-control" /></div>
+            </div>
+
+            <div class="flex gap-3 mt-4">
+                <button type="submit" class="btn btn-primary">Create Patient</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

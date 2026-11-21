@@ -1,0 +1,61 @@
+@model IEnumerable<Appointment>
+@{ ViewData["Title"] = "Appointments"; ViewData["Page"] = "Appointments"; }
+
+<div class="page-header">
+    <div><h1>Appointments</h1><div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><span>Appointments</span></div></div>
+    <a asp-action="Create" class="btn btn-primary">➕ New Appointment</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body flex gap-2" style="flex-wrap:wrap;">
+        <a asp-action="Index" class="btn @(ViewBag.StatusFilter == null ? "btn-primary" : "btn-outline") btn-sm">All</a>
+        @foreach (var s in Enum.GetNames(typeof(AppointmentStatus)))
+        {
+            <a asp-action="Index" asp-route-status="@s" class="btn @(ViewBag.StatusFilter == s ? "btn-primary" : "btn-outline") btn-sm">@s</a>
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📋</div><h3>No appointments found</h3></div></td></tr>
+                }
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@a.Patient?.FullName</td>
+                        <td>Dr. @a.Doctor?.FullName</td>
+                        <td>@a.AppointmentDate.ToString("MMM d, yyyy - h:mm tt")</td>
+                        <td>
+                            @{
+                                var badgeClass = a.Status switch {
+                                    AppointmentStatus.Pending   => "badge-warning",
+                                    AppointmentStatus.Confirmed => "badge-info",
+                                    AppointmentStatus.Completed => "badge-success",
+                                    AppointmentStatus.Cancelled => "badge-danger",
+                                    _ => "badge-secondary"
+                                };
+                            }
+                            <span class="badge @badgeClass">@a.Status</span>
+                        </td>
+                        <td>
+                            <div class="flex gap-2">
+                                <a asp-action="Details" asp-route-id="@a.Id" class="btn btn-outline btn-sm">👁️</a>
+                                <a asp-action="Edit" asp-route-id="@a.Id" class="btn btn-outline btn-sm">✏️</a>
+                                <form asp-action="Delete" asp-route-id="@a.Id" method="post" data-confirm="Delete this appointment?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

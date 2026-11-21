@@ -1,0 +1,42 @@
+@model Doctor
+@{ ViewData["Title"] = "Dr. " + Model.FullName; ViewData["Page"] = "Doctors"; }
+
+<div class="page-header">
+    <div><h1>Dr. @Model.FullName</h1><div class="breadcrumb"><a asp-controller="Home" asp-action="Index">Dashboard</a><span>/</span><a asp-action="Index">Doctors</a><span>/</span><span>@Model.FullName</span></div></div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">✏️ Edit</a>
+</div>
+
+<div class="grid grid-3-1">
+    <div class="card">
+        <div class="card-body">
+            <div class="grid grid-2">
+                <div><div class="text-muted text-sm">Specialization</div><div class="fw-600">@Model.Specialization</div></div>
+                <div><div class="text-muted text-sm">Clinic</div><div class="fw-600">@Model.Clinic?.Name</div></div>
+                <div><div class="text-muted text-sm">Phone</div><div class="fw-600">@Model.PhoneNumber</div></div>
+                <div><div class="text-muted text-sm">Fee</div><div class="fw-600">$@Model.ConsultationFee</div></div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Bio)) { <div class="mt-4"><div class="text-muted text-sm">Bio</div><p class="mt-1">@Model.Bio</p></div> }
+
+            <div class="mt-6">
+                <h6 class="fw-600 mb-3">📅 Weekly Schedule</h6>
+                @if (!Model.Schedules.Any())
+                {
+                    <p class="text-muted text-sm">No schedule published yet.</p>
+                }
+                else
+                {
+                    <div class="grid grid-3">
+                        @foreach (var s in Model.Schedules.OrderBy(s => s.DayOfWeek))
+                        {
+                            <div class="badge badge-info" style="padding:8px 12px;">@s.DayOfWeek: @s.StartTime.ToString("h:mm tt") - @s.EndTime.ToString("h:mm tt")</div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" style="width:100%;border-radius:14px;object-fit:cover;height:220px;" />
+    }
+</div>
